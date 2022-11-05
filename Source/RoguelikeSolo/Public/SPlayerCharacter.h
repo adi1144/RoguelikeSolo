@@ -56,7 +56,11 @@ protected:
 	void BlackHole();
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
 
-	virtual void BeginPlay() override;
+	UFUNCTION()
+	void OnHealtChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+	UFUNCTION()
+		void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void PostInitializeComponents() override;
 
 public:	
 	// Called every frame

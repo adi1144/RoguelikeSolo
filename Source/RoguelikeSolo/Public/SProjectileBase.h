@@ -30,8 +30,16 @@ protected:
 	USphereComponent* SphereComp;
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 		UParticleSystem* ImpactVFX;
+	UPROPERTY(EditAnywhere, Category = "Audio")
+		UAudioComponent* FlySound;
+	UPROPERTY(EditAnywhere, Category = "Audio")
+		USoundBase* ExplodeSound;
 	// Called when the game starts or when spawned
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly )
+		float Damage;
+
+
 	UFUNCTION()
 		void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	UFUNCTION()

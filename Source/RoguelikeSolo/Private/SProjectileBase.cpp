@@ -7,6 +7,7 @@
 #include <GameFramework/ProjectileMovementComponent.h>
 
 #include "SAttributeComponent.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -28,30 +29,34 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->InitialSpeed = 1000.f;
 	MovementComp->ProjectileGravityScale = 0.f;
 
-	
 
+	FlySound = CreateDefaultSubobject<UAudioComponent>("Audio");
+	FlySound->SetupAttachment(RootComponent);
 
 
 }
 
 void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (OtherActor != GetInstigator())
+	{
+		Explode();
+	}
 	
-	Explode();
 	
 }
 
 void ASProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
+	if (OtherActor && OtherActor!= GetInstigator())
 	{
 		USAttributeComponent* AttributeComp=Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 
 		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(-20.0f);
+			AttributeComp->ApplyHealthChange(-Damage);
 
-			Destroy();
+			Explode();
 		}
 	}
 
@@ -63,6 +68,7 @@ void ASProjectileBase::Explode_Implementation()
 	if (ensure(IsValid(this)))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::PlaySoundAtLocation(this, ExplodeSound, GetActorLocation(), GetActorRotation());
 		Destroy();
 
 	}

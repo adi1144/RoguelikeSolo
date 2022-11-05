@@ -10,6 +10,7 @@
 #include "SAttributeComponent.h"
 
 
+
 // Sets default values
 ASPlayerCharacter::ASPlayerCharacter()
 {
@@ -145,10 +146,34 @@ void ASPlayerCharacter::Dash()
 }
 
 
-// Called when the game starts or when spawned
-void ASPlayerCharacter::BeginPlay()
+void ASPlayerCharacter::OnHealtChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
-	Super::BeginPlay();
+	if (NewHealth<=0.f && Delta<0)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+
+		DisableInput(PC);
+	}
+	if (Delta < 0)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+	}
+
+}
+
+void ASPlayerCharacter::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	
+}
+
+
+
+// Called when the game starts or when spawned
+void ASPlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComp->OnHealthChange.AddDynamic(this, &ASPlayerCharacter::OnHealtChange);
 	
 }
 
