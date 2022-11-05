@@ -29,6 +29,7 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->InitialSpeed = 1000.f;
 	MovementComp->ProjectileGravityScale = 0.f;
 
+	
 
 	FlySound = CreateDefaultSubobject<UAudioComponent>("Audio");
 	FlySound->SetupAttachment(RootComponent);
@@ -80,6 +81,7 @@ void ASProjectileBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
+	SphereComp->IgnoreActorWhenMoving(this,true);
 
 	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectileBase::OnActorHit);
 }
